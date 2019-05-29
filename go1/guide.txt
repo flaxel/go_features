@@ -1,0 +1,103 @@
+source: https://golang.org/doc/effective_go.html
+
+further resources: 
+	- FURTHER EXAMPLES: https://golangcode.com
+	- TUTORIAL: https://golangbot.com or https://gobyexample.com
+	- HOME: https://golang.org
+	- CHEAT SHEET: https://devhints.io/go
+	- SHELL SHARING: https://play.golang.org/
+	- TOOLS: https://www.alexedwards.net/blog/an-overview-of-go-tooling
+	- FUN: https://gopherize.me/
+
+- Commentary: block comments (/**/) + line comments (//)
+	-> block comments appear mostly as package comments/disable large swaths, package comment only needs to present in one file + introduce the package + provide relevant information
+	-> correct spelling, punctuation, sentence structure
+	-> every exported name in a program should have a comment, first sentence: one-sentence summary that starts with the name
+
+- Package Name: when a package is imported, package name becomes an accessor for the content
+	-> name should be short, concise, evocative, lower case, single-word, unique
+	-> do not use: underscores, mixedCaps
+	-> a helpful doc comment can often be more valuable than an extra long name
+
+- Getter/Setter: no automatic support
+	-> not necessary to put a 'Get' in the name: Name()
+	-> setter: SetName()
+
+- interface names: 
+	-> one-method interfaces: method name + 'er' suffix
+
+- MixedCaps: use 'MixedCaps' or 'mixedCaps' rather than underscores to write multiword names
+
+- Semicolons: 
+	-> go's formal grammar uses semicolons to terminate statements
+	-> ATTENTION: do not appear in the source -> automatically insert semicolons
+
+- Control structures: if, for, switch, select
+	-> do not put the opening brace on the next line (see Semicolons)
+	-> if: mandatory braces, optional initialization statement
+	-> for: flexible, break, continue
+		+ range for strings: breaking out individual Unicode code points by parsing UTF-8, Erroneous encodings consume one byte + produce replacement rune U+FFFD 
+		+ '++' and '--' are statements not expressions
+	-> switch: flexible, optional initialization statement, type switch
+	-> select: multiway communications multiplexer
+
+- Redeclaration/Reassignment: in a ':=' declaration a variable v may appear even if it has already been declared, provided: 
+	-> declaration is in the same scope as the existing declaration of v
+	-> corresponding value in the initialization is assignable to v
+	-> there is at least one other variable in the declaration that is being declared anew
+
+- Functions: 
+	-> multiple return values: (name type, name type)
+	-> named result parameters: code is more short/clear, names are not mandatory
+	-> defer: schedules a function call to be run immediately before the function executing the defer returns
+
+- Data: 
+	-> Allocation with new(T): allocates memory/zeroed storage, does not initialize the memory, returns the address *T
+	-> Constructors/Composite Literals: initializing constructor, composite literal (an expression that creates a new instance each time it is evaluated)
+		+ possible to return the address of a local variable - storage associated with the variable survives after the function returns
+		+ possible to labeling the elements explicitly as 'field: value', missing ones - respective zero values
+		+ notice: new(T) and &T{} are equivalent
+		+ composite literals can also be created for arrays, slices, maps
+	-> Allocation with make: creates slices, maps, channels (can also use composite literals); returns an initialized value of type T, initializes the internal data structure + prepares the value for use
+	-> Arrays: useful when planning the detailed layout of memory + sometime can help avoid allocation, arrays are values, fixed size, assigning one array to another copies all elements
+	-> Slices: wrap an array, more powerful, efficient, convenient interface to sequences of data, slices hold references to an underlying array, if the data exceeds the capacity, the slice is reallocated, no equal function
+	-> two dimensional: array-of-array or slice-of-slices, slices are variable length - each inner slice can be different length, possible to allocate
+	-> Maps: convenient, powerful, associations, slices cannot be used as map keys (equality not defined)
+	-> string representation: method signature is 'String(): string'
+	-> Append: append the elements to the end of the slice + return the result, underlying array may change
+
+- Initialization: 
+	-> Constants: created at compile time, even when defined as locals in functions, only numbers/characters/strings/booleans, must be constant expression
+		-> notice: enumerated constants can be created with the iota enumerator
+	-> Variables: can be initialized just like constants but the initializer can be general expression computed at runtime - var (<variables>), shorter
+	-> init function: set up whatever state is required, is called after all variable declarations in the package have evaluated their initializers + all imported packages have been initialized
+
+- Methods: Pointers vs Values
+
+- Interfaces: specify the behavior of an object, methods
+
+- Conversions: if two types are the same, ignore the type name, legal to convert between them
+
+- Interface Conversion and Type Assertions: type switches, take an interface value and extracts from it a value of the specified explicit type
+
+- Blank Identifier: 
+	+ can be assigned/declared with any value of any type with the value discarded harmlessly, 
+	+ Unused Imports and Variables: bloat program, slow compilation, wasted computation, indicative of a larger bug, it is a workaround
+	+ Import for side effects: without any explicit use, necessary side effects
+	+ Interface Checks: type assertions
+
+- Embedding: ability to 'borrow' pieces of an implementation by embedding types within a struct or interface, see composition, possible to refer to an embedded field directly, name conflicts
+
+- Concurrency: 
+	+ DO NOT COMMUNICATE BY SHARING MEMORY, INSTEAD SHARE MEMORY BY COMMUNICATING
+	+ Goroutine: a function executing concurrently with other goroutines in the same address space, lightweight, cheap, grow up by allocating heap storage as required, multiplexed
+
+- Channels: buffered/unbuffered
+
+- Channels of Channels: channel is a first class value that can be allocated + passed around like any other, common use: implement safe, parallel demultiplexing
+
+- Parallelization: parallelize across mutliple CPU cores, start more goroutines and use channels for communication
+
+- Errors: method signature is 'Error() string', provide detailed error information
+- Panic: error is unrecoverable, create runtime error, should avoid panic
+- Recover: regain control of the goroutine + resume normal execution
