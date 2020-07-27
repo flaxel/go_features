@@ -1,7 +1,7 @@
 package main
 
 import (
-	"06_package/rectangle"
+	"go1/06_package/rectangle"
 	"fmt"
 	_ "math" // error silencer
 )
